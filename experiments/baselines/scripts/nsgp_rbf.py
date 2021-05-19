@@ -14,9 +14,9 @@ fold = sys.argv[2]
 f_id = sys.argv[3]
 N_l_bar_max = 8
 
-trn_X = np.load(path+'data/fold_'+fold+'/train/X/'+f_id+'.npy')
-trn_y = np.load(path+'data/fold_'+fold+'/train/y/'+f_id+'.npy')
-tst_X = np.load(path+'data/fold_'+fold+'/test/X/'+f_id+'.npy')
+trn_X = np.load(path+'data/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0']
+trn_y = np.load(path+'data/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0']
+tst_X = np.load(path+'data/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0']
 
 scaler = pd.read_pickle(path+'data/fold_'+fold+'/scaler/'+f_id+'.pickle')
  
@@ -50,4 +50,4 @@ pred_y = scaler.inverse_transform(best_model.predict(tst_X)[0])
 if not os.path.exists(path+'results/'+model_name+'/fold_'+fold+'/'):
     os.makedirs(path+'results/'+model_name+'/fold_'+fold+'/')
 
-# np.save(path+'results/'+model_name+'/fold_'+fold+'/'+f_id+'.npy', pred_y)
+# np.savez_compressed(path+'results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
