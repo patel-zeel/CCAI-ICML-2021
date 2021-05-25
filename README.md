@@ -1,4 +1,3 @@
-# CCAI-ICML-2021
 ```r
 python == 3.8.5
 ```
