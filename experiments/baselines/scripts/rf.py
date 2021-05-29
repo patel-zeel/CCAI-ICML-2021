@@ -5,9 +5,9 @@ import pandas as pd
 import sys
 import os
 
-param_grid = {'n_estimators':[50,100,150,200], 
-              'max_depth':[1,2,3,4,5,20],
-              'max_features':[1,2,3,4,5,6]}
+param_grid = {'n_estimators':[100], 
+              'max_depth':[1,2,3,4,20],
+              'max_features':[1,2,3,4,20]}
 rf = RandomForestRegressor(random_state=0)
 
 cvmodel = GridSearchCV(rf, param_grid, refit=True, cv=5)
@@ -17,18 +17,18 @@ path = sys.argv[1]
 fold = sys.argv[2]
 f_id = sys.argv[3]
 
-trn_X = np.load(path+'data/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0']
-trn_y = np.load(path+'data/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0']
-tst_X = np.load(path+'data/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0']
+trn_X = np.load(path+'data10/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0']
+trn_y = np.load(path+'data10/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0']
+tst_X = np.load(path+'data10/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0']
 
-scaler = pd.read_pickle(path+'data/fold_'+fold+'/scaler/'+f_id+'.pickle')
+scaler = pd.read_pickle(path+'data10/fold_'+fold+'/scaler/'+f_id+'.pickle')
 
 cvmodel.fit(trn_X, trn_y.ravel())
 
 pred_y = scaler.inverse_transform(cvmodel.predict(tst_X))
 
-if not os.path.exists(path+'results/'+model_name+'/fold_'+fold+'/'):
-    os.makedirs(path+'results/'+model_name+'/fold_'+fold+'/')
+if not os.path.exists(path+'data10/results/'+model_name+'/fold_'+fold+'/'):
+    os.makedirs(path+'data10/results/'+model_name+'/fold_'+fold+'/')
 
-np.savez_compressed(path+'results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
-pd.to_pickle(cvmodel, path+'results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')
+np.savez_compressed(path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
+pd.to_pickle(cvmodel, path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')

@@ -1,8 +1,8 @@
-from stheno import Measure, GP, EQ, Delta
 import numpy as np
 import pandas as pd
 import sys
 import os
+from stheno import Measure, GP, EQ, Delta
 np.random.seed(0)
 
 model_name = sys.argv[0].split('/')[-1].replace('.py','')
@@ -13,6 +13,7 @@ f_id = sys.argv[3]
 trn_X = np.load(path+'data/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0']
 trn_y = np.load(path+'data/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0']
 tst_X = np.load(path+'data/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0']
+mean_y = trn_y.mean()
 
 scaler = pd.read_pickle(path+'data/fold_'+fold+'/scaler/'+f_id+'.pickle')
 
@@ -20,8 +21,8 @@ prior = Measure()                  # Construct a prior.
 f1 = GP(EQ(), measure=prior)        # Define our probabilistic model.
 f2 = GP(Delta(), measure=prior)
 f = f1+f2
-post = prior | (f(trn_X), trn_y)           # Compute the posterior distribution.
-pred = post(f).mean(tst_X).mat
+post = prior | (f(trn_X), trn_y - mean_y)           # Compute the posterior distribution.
+pred = post(f).mean(tst_X).mat + mean_y
 
 pred_y = scaler.inverse_transform(pred)
 
