@@ -12,11 +12,11 @@ path = sys.argv[1]
 fold = sys.argv[2]
 f_id = sys.argv[3]
 
-trn_X = torch.tensor(np.load(path+'data10/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0']).to(torch.float32)
-trn_y = torch.tensor(np.load(path+'data10/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0']).to(torch.float32)
-tst_X = torch.tensor(np.load(path+'data10/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0']).to(torch.float32)
+trn_X = torch.tensor(np.load(path+'data2/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0']).to(torch.float32)
+trn_y = torch.tensor(np.load(path+'data2/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0']).to(torch.float32)
+tst_X = torch.tensor(np.load(path+'data2/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0']).to(torch.float32)
 
-scaler = pd.read_pickle(path+'data10/fold_'+fold+'/scaler/'+f_id+'.pickle')
+scaler = pd.read_pickle(path+'data2/fold_'+fold+'/scaler/'+f_id+'.pickle')
 
 # model definition
 class MLP(torch.nn.Module):
@@ -79,8 +79,8 @@ model.eval()
 pred = model(tst_X.to(device)).cpu().detach().numpy()
 pred_y = scaler.inverse_transform(pred)
 
-if not os.path.exists(path+'data10/results/'+model_name+'/fold_'+fold+'/'):
-    os.makedirs(path+'data10/results/'+model_name+'/fold_'+fold+'/')
+if not os.path.exists(path+'data2/results/'+model_name+'/fold_'+fold+'/'):
+    os.makedirs(path+'data2/results/'+model_name+'/fold_'+fold+'/')
 
-np.savez_compressed(path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
-pd.to_pickle({'model':model, 'loss':losses}, path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')
+np.savez_compressed(path+'data2/results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
+pd.to_pickle({'model':model, 'loss':losses}, path+'data2/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')

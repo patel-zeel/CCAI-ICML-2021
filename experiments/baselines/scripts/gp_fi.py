@@ -17,10 +17,10 @@ path = sys.argv[1]
 fold = sys.argv[2]
 f_id = sys.argv[3]
 
-trn_X = torch.tensor(np.load(path+'data10/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
-trn_y = torch.tensor(np.load(path+'data10/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
-tst_X = torch.tensor(np.load(path+'data10/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
-tst_y = torch.tensor(np.load(path+'data10/fold_'+fold+'/test/y/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
+trn_X = torch.tensor(np.load(path+'data2/fold_'+fold+'/train/X/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
+trn_y = torch.tensor(np.load(path+'data2/fold_'+fold+'/train/y/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
+tst_X = torch.tensor(np.load(path+'data2/fold_'+fold+'/test/X/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
+tst_y = torch.tensor(np.load(path+'data2/fold_'+fold+'/test/y/'+f_id+'.npz')['arr_0'], dtype=torch.float32)
 mean_y = trn_y.mean()
 data_dim = trn_X.size(-1)
 n_dim = 1
@@ -32,7 +32,7 @@ class LargeFeatureExtractor(torch.nn.Sequential):
 
 feature_extractor = LargeFeatureExtractor()
 
-scaler = pd.read_pickle(path+'data10/fold_'+fold+'/scaler/'+f_id+'.pickle')
+scaler = pd.read_pickle(path+'data2/fold_'+fold+'/scaler/'+f_id+'.pickle')
 
 class GPRegressionModel(gpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
@@ -105,9 +105,9 @@ with torch.no_grad(), gpytorch.settings.use_toeplitz(False), gpytorch.settings.f
 
 pred_y = scaler.inverse_transform(preds)
 # print(mean_squared_error(tst_y.ravel(), pred_y, squared=False))
-if not os.path.exists(path+'data10/results/'+model_name+'/fold_'+fold+'/'):
-    os.makedirs(path+'data10/results/'+model_name+'/fold_'+fold+'/')
+if not os.path.exists(path+'data2/results/'+model_name+'/fold_'+fold+'/'):
+    os.makedirs(path+'data2/results/'+model_name+'/fold_'+fold+'/')
 
-np.savez_compressed(path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
-pd.to_pickle(model.state_dict(), path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')
-# os.system('gzip -f '+path+'data10/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')
+np.savez_compressed(path+'data2/results/'+model_name+'/fold_'+fold+'/'+f_id+'.npz', pred_y)
+pd.to_pickle(model.state_dict(), path+'data2/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')
+# os.system('gzip -f '+path+'data2/results/'+model_name+'/fold_'+fold+'/'+f_id+'.model')
